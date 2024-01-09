@@ -8,4 +8,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public interface BeanFactory {
     Object getBean(String name);
+
+    Object getBean(String name, Object... args);
 }

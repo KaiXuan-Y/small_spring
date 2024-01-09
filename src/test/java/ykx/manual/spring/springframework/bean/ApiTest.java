@@ -13,7 +13,7 @@ public class ApiTest {
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
         defaultListableBeanFactory.registerBeanDefinition("userService" , beanDefinition);
 
-        UserService userService = (UserService) defaultListableBeanFactory.getBean("userService");
+        UserService userService = (UserService) defaultListableBeanFactory.getBean("userService", "hello");
         userService.queryUserInfo();
 
     }
