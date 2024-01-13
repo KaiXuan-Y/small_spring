@@ -7,6 +7,7 @@ import ykx.manual.spring.springframework.beans.factory.PropertyValues;
 import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
 import ykx.manual.spring.springframework.beans.factory.config.BeanReference;
 import ykx.manual.spring.springframework.beans.factory.support.DefaultListableBeanFactory;
+import ykx.manual.spring.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 
 public class ApiTest {
 
@@ -35,6 +36,18 @@ public class ApiTest {
         defaultListableBeanFactory.registerBeanDefinition("userService", beanDefinition);
 
         UserService userService = (UserService) defaultListableBeanFactory.getBean("userService");
+        userService.queryUserInfo();
+    }
+
+
+
+    @Test
+    public void test_classpath() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinition("classpath:spring.xml");
+
+        UserService userService = beanFactory.getBean("userService", UserService.class);
         userService.queryUserInfo();
     }
 }
