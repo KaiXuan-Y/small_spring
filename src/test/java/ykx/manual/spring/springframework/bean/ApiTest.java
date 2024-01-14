@@ -8,14 +8,15 @@ import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
 import ykx.manual.spring.springframework.beans.factory.config.BeanReference;
 import ykx.manual.spring.springframework.beans.factory.support.DefaultListableBeanFactory;
 import ykx.manual.spring.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import ykx.manual.spring.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ApiTest {
 
     @Test
-    public void test_BeanFactory(){
+    public void test_BeanFactory() {
         DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
-        defaultListableBeanFactory.registerBeanDefinition("userService" , beanDefinition);
+        defaultListableBeanFactory.registerBeanDefinition("userService", beanDefinition);
 
         UserService userService = (UserService) defaultListableBeanFactory.getBean("userService", "hello");
         userService.queryUserInfo();
@@ -24,7 +25,7 @@ public class ApiTest {
 
     @Test
 
-    public void test_BeanFactory_2(){
+    public void test_BeanFactory_2() {
         DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
         defaultListableBeanFactory.registerBeanDefinition("userDao", new BeanDefinition(UserDao.class));
 
@@ -40,7 +41,6 @@ public class ApiTest {
     }
 
 
-
     @Test
     public void test_classpath() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
@@ -48,6 +48,14 @@ public class ApiTest {
         xmlBeanDefinitionReader.loadBeanDefinition("classpath:spring.xml");
 
         UserService userService = beanFactory.getBean("userService", UserService.class);
+        userService.queryUserInfo();
+    }
+
+
+    @Test
+    public void test_context() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        UserService userService = applicationContext.getBean("userService", UserService.class);
         userService.queryUserInfo();
     }
 }

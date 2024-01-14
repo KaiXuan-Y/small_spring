@@ -1,5 +1,6 @@
 package ykx.manual.spring.springframework.beans.factory.xml;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.XmlUtil;
 import org.w3c.dom.Document;
@@ -50,6 +51,18 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         ResourceLoader resourceLoader = this.getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinition(resource);
+    }
+
+    @Override
+    public void loadBeanDefinition(String[] locations) throws BeansCreateException {
+
+        Assert.isTrue(0 != locations.length );
+        for (String location : locations) {
+            ResourceLoader resourceLoader = getResourceLoader();
+            Resource resource = resourceLoader.getResource(location);
+            loadBeanDefinition(resource);
+        }
+
     }
 
     private void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {

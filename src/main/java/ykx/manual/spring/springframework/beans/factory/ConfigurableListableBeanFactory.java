@@ -11,4 +11,7 @@ import ykx.manual.spring.springframework.beans.factory.exception.BeansCreateExce
 public interface ConfigurableListableBeanFactory extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory {
     BeanDefinition getBeanDefinition(String beanName) throws BeansCreateException;
 
+    void preInstantiateSingletons() throws BeansCreateException;
+
+
 }

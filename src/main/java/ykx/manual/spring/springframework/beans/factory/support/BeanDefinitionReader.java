@@ -20,4 +20,6 @@ public interface BeanDefinitionReader {
 
     void loadBeanDefinition(String location) throws BeansCreateException;
 
+    void loadBeanDefinition(String[] locations) throws BeansCreateException;
+
 }
