@@ -1,6 +1,9 @@
 package ykx.manual.spring.springframework.bean;
 
-public class UserService {
+import ykx.manual.spring.springframework.beans.factory.DisposableBean;
+import ykx.manual.spring.springframework.beans.factory.InitializingBean;
+
+public class UserService implements InitializingBean, DisposableBean {
     private String uId;
 
     private UserDao userDao;
@@ -36,5 +39,15 @@ public class UserService {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
     }
 }

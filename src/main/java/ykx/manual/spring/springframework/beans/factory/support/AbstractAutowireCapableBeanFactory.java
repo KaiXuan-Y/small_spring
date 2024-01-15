@@ -1,6 +1,12 @@
 package ykx.manual.spring.springframework.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import net.sf.cglib.core.ReflectUtils;
+import ykx.manual.spring.springframework.beans.factory.DisposableBean;
+import ykx.manual.spring.springframework.beans.factory.InitializingBean;
 import ykx.manual.spring.springframework.beans.factory.PropertyValue;
 import ykx.manual.spring.springframework.beans.factory.PropertyValues;
 import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
@@ -9,6 +15,7 @@ import ykx.manual.spring.springframework.beans.factory.config.BeanReference;
 import ykx.manual.spring.springframework.beans.factory.exception.BeansCreateException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * @author yangkaixuan
@@ -24,13 +31,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //给Bean进行属性填充
         applyPropertyValues(beanName, instance, beanDefinition);
 
-        instance = initializeBean(beanName, instance, beanDefinition);
+        try {
+            instance = initializeBean(beanName, instance, beanDefinition);
+        } catch (Exception e) {
+            throw new BeansCreateException("error invoke init method", e);
+        }
+        registerDisposableBeanIfNecessary(beanName, instance, beanDefinition);
         addSingleton(beanName, instance);
         return instance;
 
     }
 
-    private Object initializeBean(String beanName, Object instance, BeanDefinition beanDefinition) {
+    private void registerDisposableBeanIfNecessary(String beanName, Object instance, BeanDefinition beanDefinition) {
+        if (instance instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())){
+            registerDisposableBean(beanName, new DisposableBeanAdapter(instance, beanName, beanDefinition));
+        }
+    }
+
+
+    private Object initializeBean(String beanName, Object instance, BeanDefinition beanDefinition) throws Exception {
         Object wrappedBean = applyBeanPostProcessorBeforeInitialization(instance, beanName);
 
         invokeInitMethods(beanName, wrappedBean, beanDefinition);
@@ -41,8 +60,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return wrappedBean;
     }
 
-    private void invokeInitMethods(String beanName, Object wrappedBean, BeanDefinition beanDefinition) {
+    private void invokeInitMethods(String beanName, Object wrappedBean, BeanDefinition beanDefinition) throws Exception {
+        if (wrappedBean instanceof InitializingBean) {
+            ((InitializingBean) wrappedBean).afterPropertiesSet();
+        }
 
+        String initMethodName = beanDefinition.getInitMethodName();
+        if (StrUtil.isNotEmpty(initMethodName)){
+            Method method = beanDefinition.getBeanClass().getMethod(initMethodName);
+            if (null == method){
+                throw new BeansCreateException("could not find init method:" + initMethodName);
+            }
+            method.invoke(wrappedBean);
+        }
     }
 
     private Object applyBeanPostProcessorBeforeInitialization(Object instance, String beanName) {

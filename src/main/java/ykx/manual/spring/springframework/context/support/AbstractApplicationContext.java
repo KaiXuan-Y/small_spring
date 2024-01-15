@@ -4,6 +4,7 @@ import ykx.manual.spring.springframework.beans.factory.ConfigurableListableBeanF
 import ykx.manual.spring.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.config.BeanPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.exception.BeansCreateException;
+import ykx.manual.spring.springframework.beans.factory.support.DefaultListableBeanFactory;
 import ykx.manual.spring.springframework.context.ConfigurableApplicationContext;
 import ykx.manual.spring.springframework.core.io.DefaultResourceLoader;
 
@@ -70,8 +71,20 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         }
     }
 
+    @Override
+    public void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
+    @Override
+    public void close() {
+        getBeanFactory().destroySingletons();
+    }
+
     protected abstract ConfigurableListableBeanFactory getBeanFactory();
 
     //创建BeanFactory
     protected abstract void refreshBeanFactory() throws BeansCreateException;
+
+
 }

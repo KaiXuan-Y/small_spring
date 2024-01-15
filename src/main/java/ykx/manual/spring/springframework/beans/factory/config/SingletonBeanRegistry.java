@@ -5,4 +5,6 @@ package ykx.manual.spring.springframework.beans.factory.config;
  */
 public interface SingletonBeanRegistry {
     Object getSingleton(String beanName);
+
+    void destroySingletons();
 }
