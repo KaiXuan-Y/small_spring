@@ -1,9 +1,12 @@
 package ykx.manual.spring.springframework.bean;
 
-import ykx.manual.spring.springframework.beans.factory.DisposableBean;
-import ykx.manual.spring.springframework.beans.factory.InitializingBean;
+import ykx.manual.spring.springframework.beans.factory.*;
+import ykx.manual.spring.springframework.context.ApplicationContext;
 
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean, BeanNameAware, ApplicationContextAware, BeanFactoryAware,BeanClassLoaderAware{
+
+    private BeanFactory beanFactory;
+    private ApplicationContext applicationContext;
     private String uId;
 
     private UserDao userDao;
@@ -49,5 +52,25 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
         System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        System.out.println("Bean Name is " + beanName);
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("ClassLoader is " + classLoader);
     }
 }

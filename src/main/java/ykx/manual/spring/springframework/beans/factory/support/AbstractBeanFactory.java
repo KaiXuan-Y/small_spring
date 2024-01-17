@@ -4,6 +4,7 @@ import ykx.manual.spring.springframework.beans.factory.BeanFactory;
 import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
 import ykx.manual.spring.springframework.beans.factory.config.BeanPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.config.ConfigurableBeanFactory;
+import ykx.manual.spring.springframework.util.ClassUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public abstract class AbstractBeanFactory extends DefaultSingletonRegistry implements ConfigurableBeanFactory {
 
+    private final ClassLoader beanClassLoader = ClassUtil.getDefaultClassLoader();
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     @Override
@@ -48,6 +50,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonRegistry imple
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
     }
 
     public List<BeanPostProcessor> getBeanPostProcessors() {

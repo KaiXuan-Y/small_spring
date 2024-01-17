@@ -5,10 +5,7 @@ import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import net.sf.cglib.core.ReflectUtils;
-import ykx.manual.spring.springframework.beans.factory.DisposableBean;
-import ykx.manual.spring.springframework.beans.factory.InitializingBean;
-import ykx.manual.spring.springframework.beans.factory.PropertyValue;
-import ykx.manual.spring.springframework.beans.factory.PropertyValues;
+import ykx.manual.spring.springframework.beans.factory.*;
 import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
 import ykx.manual.spring.springframework.beans.factory.config.BeanPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.config.BeanReference;
@@ -43,13 +40,28 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private void registerDisposableBeanIfNecessary(String beanName, Object instance, BeanDefinition beanDefinition) {
-        if (instance instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())){
+        if (instance instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())) {
             registerDisposableBean(beanName, new DisposableBeanAdapter(instance, beanName, beanDefinition));
         }
     }
 
 
     private Object initializeBean(String beanName, Object instance, BeanDefinition beanDefinition) throws Exception {
+        //invokeAwareMethods
+        if (instance instanceof Aware) {
+            if (instance instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) instance).setBeanFactory(this);
+            }
+
+            if (instance instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) instance).setBeanClassLoader(getBeanClassLoader());
+            }
+
+            if (instance instanceof BeanNameAware) {
+                ((BeanNameAware) instance).setBeanName(beanName);
+            }
+        }
+
         Object wrappedBean = applyBeanPostProcessorBeforeInitialization(instance, beanName);
 
         invokeInitMethods(beanName, wrappedBean, beanDefinition);
@@ -66,9 +78,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         String initMethodName = beanDefinition.getInitMethodName();
-        if (StrUtil.isNotEmpty(initMethodName)){
+        if (StrUtil.isNotEmpty(initMethodName)) {
             Method method = beanDefinition.getBeanClass().getMethod(initMethodName);
-            if (null == method){
+            if (null == method) {
                 throw new BeansCreateException("could not find init method:" + initMethodName);
             }
             method.invoke(wrappedBean);
