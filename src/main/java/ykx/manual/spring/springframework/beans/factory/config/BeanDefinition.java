@@ -8,6 +8,11 @@ import ykx.manual.spring.springframework.beans.factory.PropertyValues;
  * @author yangkaixuan
  */
 public class BeanDefinition {
+
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
     private Class beanClass;
 
     private PropertyValues propertyValues;
@@ -15,6 +20,21 @@ public class BeanDefinition {
     private String initMethodName;
 
     private String destroyMethodName;
+
+    private boolean singleton = true;
+
+    private boolean prototype = false;
+
+    private String scope = SCOPE_SINGLETON;
+
+    public void setScope(String scope){
+        this.scope = scope;
+        this.singleton = SCOPE_SINGLETON.equals(scope);
+        this.prototype = SCOPE_PROTOTYPE.equals(scope);
+
+    }
+
+
 
     public BeanDefinition(Class beanClass, PropertyValues propertyValues) {
         this.beanClass = beanClass;

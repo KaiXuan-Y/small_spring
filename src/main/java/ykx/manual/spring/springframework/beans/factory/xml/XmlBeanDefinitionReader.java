@@ -3,6 +3,7 @@ package ykx.manual.spring.springframework.beans.factory.xml;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.XmlUtil;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -85,6 +86,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String initMethodName = bean.getAttribute("init-method");
             String destroyMethodName = bean.getAttribute("destroy-method");
 
+            String beanScope = bean.getAttribute("scope");
+
+
             Class<?> clazz = Class.forName(className);
             //优先级：id>name
             String beanName = StrUtil.isNotEmpty(id) ? id : name;
@@ -94,6 +98,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             beanDefinition.setInitMethodName(initMethodName);
             beanDefinition.setDestroyMethodName(destroyMethodName);
+
+            if (StringUtils.isNotBlank(beanScope)){
+                beanDefinition.setScope(beanScope);
+            }
 
             for (int j = 0 ; j < bean.getChildNodes().getLength() ; j ++){
                 if (!(bean.getChildNodes().item(j) instanceof Element)) {
