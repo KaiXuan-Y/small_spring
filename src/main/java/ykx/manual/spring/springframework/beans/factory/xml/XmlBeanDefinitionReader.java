@@ -101,6 +101,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             if (StringUtils.isNotBlank(beanScope)){
                 beanDefinition.setScope(beanScope);
+            }else {
+                beanDefinition.setScope("");
             }
 
             for (int j = 0 ; j < bean.getChildNodes().getLength() ; j ++){

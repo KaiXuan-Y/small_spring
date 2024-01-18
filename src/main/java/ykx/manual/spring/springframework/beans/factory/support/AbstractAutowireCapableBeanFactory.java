@@ -34,12 +34,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansCreateException("error invoke init method", e);
         }
         registerDisposableBeanIfNecessary(beanName, instance, beanDefinition);
-        addSingleton(beanName, instance);
+
+        if (beanDefinition.isSingleton()){
+            addSingleton(beanName, instance);
+        }
         return instance;
 
     }
 
     private void registerDisposableBeanIfNecessary(String beanName, Object instance, BeanDefinition beanDefinition) {
+        if (!beanDefinition.isSingleton()){
+            return;
+        }
         if (instance instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())) {
             registerDisposableBean(beanName, new DisposableBeanAdapter(instance, beanName, beanDefinition));
         }
