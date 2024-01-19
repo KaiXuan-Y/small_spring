@@ -58,6 +58,6 @@ public class ApiTest {
         applicationContext.registerShutdownHook();
 
         UserService userService = applicationContext.getBean("userService", UserService.class);
-        userService.queryUserInfo();
+        System.out.println(userService.queryUserInfo());
     }
 }
