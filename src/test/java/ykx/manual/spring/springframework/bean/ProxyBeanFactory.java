@@ -29,7 +29,9 @@ public class ProxyBeanFactory implements FactoryBean<IUserDao> {
     }
 
     @Override
-    public boolean isSingleton() {
+    public boolean isSingleton()
+
+    {
         return true;
     }
 }

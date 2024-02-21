@@ -60,4 +60,10 @@ public class ApiTest {
         UserService userService = applicationContext.getBean("userService", UserService.class);
         System.out.println(userService.queryUserInfo());
     }
+
+    @Test
+    public void test_eventListener() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 123123l, "自定义时间发送。。。"));
+    }
 }

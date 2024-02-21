@@ -5,5 +5,5 @@ import ykx.manual.spring.springframework.beans.factory.ListableBeanFactory;
 /**
  * @author yangkaixuan
  */
-public interface ApplicationContext extends ListableBeanFactory {
+public interface ApplicationContext extends ListableBeanFactory, ApplicationEventPublisher {
 }
