@@ -1,6 +1,7 @@
 package ykx.manual.spring.springframework.bean;
 
 
+import net.sf.cglib.proxy.MethodInterceptor;
 import org.junit.Test;
 import ykx.manual.spring.springframework.beans.factory.PropertyValue;
 import ykx.manual.spring.springframework.beans.factory.PropertyValues;
