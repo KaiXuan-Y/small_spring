@@ -67,4 +67,13 @@ public class ApiTest {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
         applicationContext.publishEvent(new CustomEvent(applicationContext, 123123l, "自定义时间发送。。。"));
     }
+    @Test
+    public void test_aop() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        IUserDao userService = applicationContext.getBean("userService", IUserDao.class);
+        String s = userService.queryUserName("12");
+        System.out.println(s);
+    }
+
+
 }

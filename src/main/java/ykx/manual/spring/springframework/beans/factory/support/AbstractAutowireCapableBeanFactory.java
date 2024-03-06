@@ -9,6 +9,7 @@ import ykx.manual.spring.springframework.beans.factory.*;
 import ykx.manual.spring.springframework.beans.factory.config.BeanDefinition;
 import ykx.manual.spring.springframework.beans.factory.config.BeanPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.config.BeanReference;
+import ykx.manual.spring.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import ykx.manual.spring.springframework.beans.factory.exception.BeansCreateException;
 
 import java.lang.reflect.Constructor;
@@ -23,27 +24,52 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) {
-        Object instance;
-        instance = createBeanInstance(beanDefinition, beanName, args);
-        //给Bean进行属性填充
-        applyPropertyValues(beanName, instance, beanDefinition);
-
+        Object bean;
         try {
-            instance = initializeBean(beanName, instance, beanDefinition);
+            bean = resolveBeforeInstantiation(beanName, beanDefinition);
+            if (null != bean) {
+                return bean;
+            }
+            bean = createBeanInstance(beanDefinition, beanName, args);
+            //给Bean进行属性填充
+            applyPropertyValues(beanName, bean, beanDefinition);
+
+
+            bean = initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansCreateException("error invoke init method", e);
         }
-        registerDisposableBeanIfNecessary(beanName, instance, beanDefinition);
+        registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
 
-        if (beanDefinition.isSingleton()){
-            addSingleton(beanName, instance);
+        if (beanDefinition.isSingleton()) {
+            addSingleton(beanName, bean);
         }
-        return instance;
+        return bean;
 
     }
 
+    private Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (null != bean) {
+            bean = applyBeanPostProcessorAfterInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    private Object applyBeanPostProcessorBeforeInstantiation(Class beanClass, String beanName) {
+        for (BeanPostProcessor postProcessor : getBeanPostProcessors()) {
+            if (postProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) postProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if (null != result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     private void registerDisposableBeanIfNecessary(String beanName, Object instance, BeanDefinition beanDefinition) {
-        if (!beanDefinition.isSingleton()){
+        if (!beanDefinition.isSingleton()) {
             return;
         }
         if (instance instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())) {

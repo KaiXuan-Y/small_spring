@@ -3,17 +3,19 @@ package ykx.manual.spring.springframework.bean;
 import ykx.manual.spring.springframework.beans.factory.*;
 import ykx.manual.spring.springframework.context.ApplicationContext;
 
-public class UserService {
+import java.util.Random;
 
-//    private BeanFactory beanFactory;
-//    private ApplicationContext applicationContext;
-//    private String uId;
-//
-//    private String company;
-//
-//    private String location;
-//
-//
+public class UserService implements IUserDao{
+
+    private BeanFactory beanFactory;
+    private ApplicationContext applicationContext;
+    private String uId;
+
+    private String company;
+
+    private String location;
+
+
 //    public void queryUserInfo(){
 //        System.out.println("查询用户信息:" + userDao.queryUserName(uId) + ", 公司：" + company + ", 地点：" +location);
 //    }
@@ -74,17 +76,32 @@ public class UserService {
 //        System.out.println("ClassLoader is " + classLoader);
 //    }
 
-    private String uId;
+//    private String uId;
+//
+//    private String company;
+//
+//    private String location;
+//
+//    private IUserDao userDao;
 
-    private String company;
 
-    private String location;
-
-    private IUserDao userDao;
-
+    @Override
+    public String queryUserName(String uId) {
+        try {
+            Thread.sleep(new Random(1).nextInt(100));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "kaixuan，100001，wuxi";
+    }
 
     public String queryUserInfo(){
-        return userDao.queryUserName(uId) + "," + company + "," + location;
+        try {
+            Thread.sleep(new Random(1).nextInt(100));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "查询用户："  + " success！";
     }
 
 }
