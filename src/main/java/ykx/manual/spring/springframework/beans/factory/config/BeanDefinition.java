@@ -59,7 +59,7 @@ public class BeanDefinition {
         this.propertyValues = new PropertyValues();
     }
 
-    public Class getBeanClass() {
+    public Class<?> getBeanClass() {
         return beanClass;
     }
 

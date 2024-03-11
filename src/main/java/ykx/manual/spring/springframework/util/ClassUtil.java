@@ -1,6 +1,9 @@
 package ykx.manual.spring.springframework.util;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import ykx.manual.spring.springframework.stereotype.Component;
+
+import java.util.Set;
 
 public class ClassUtil {
 
@@ -27,5 +30,10 @@ public class ClassUtil {
 
     public static boolean isCglibProxyClassName(String className){
         return StringUtils.isNotBlank(className) && className.contains("$$");
+    }
+
+    public static Set<Class<?>> scanPackageByAnnotation(String basePackage, Class<Component> componentClass) {
+
+
     }
 }
